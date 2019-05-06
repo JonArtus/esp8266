@@ -3,7 +3,17 @@ from machine import Pin, Timer
 from secret import wifi, mqtt, client_id
 from config import config
 
-led = Pin(2, Pin.OUT)
+print('Setting up config for Client ID %s' % (client_id))
+conf = config[client_id]
+print(ujson.dumps(conf))
+
+leds = { }
+
+for led in conf['leds']:
+  print(led)
+  pin = conf['leds'][led]
+  print('Initialising led %s on pin %s' % (led, pin))
+  leds[led] = Pin(pin, Pin.OUT)
 
 heartbeat_payload = {
   'client_id': client_id,
@@ -19,10 +29,9 @@ def sub_cb(topic, msg):
       print('Restarting due to admin request...')
       machine.reset()    
       
-  if topic == b'led' and msg == b'on':
-    led.value(False)
-  if topic == b'led' and msg == b'off':
-    led.value(True)
+  if topic == b'led':
+    inst = ujson.loads(msg.decode('ascii'))
+    leds[inst['name']].value(inst['value'])   
  
 def publish_heartbeat(client):
   heartbeat_payload['heartbeat_count'] = heartbeat_payload['heartbeat_count'] + 1
