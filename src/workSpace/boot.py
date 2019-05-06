@@ -7,7 +7,7 @@ import esp
 import gc
 
 from umqttsimple import MQTTClient
-from secret import wifi, client_id
+from secret import wifi
 
 esp.osdebug(None)
 gc.collect()

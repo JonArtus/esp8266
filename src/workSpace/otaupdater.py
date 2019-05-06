@@ -3,7 +3,6 @@ import os
 import gc
 import machine
 
-
 class OTAUpdater:
     def __init__(self, github_repo, module='', main_dir='main'):
         self.http_client = HttpClient()

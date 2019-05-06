@@ -1,5 +1,6 @@
 from machine import Pin
-from secret import mqtt
+from secret import wifi, mqtt, client_id
+from config import config
 
 led = Pin(2, Pin.OUT)
 
@@ -9,17 +10,16 @@ def sub_cb(topic, msg):
   if topic == b'admin':
     if msg == b'reset': 
       print('Restarting due to admin request...')
-      machine.reset()
-  
+      machine.reset()    
+      
   if topic == b'led' and msg == b'on':
     led.value(False)
   if topic == b'led' and msg == b'off':
     led.value(True)
  
   
-def connect_and_subscribe():
-  global client_id, mqtt['server'], mqtt['user'], mqtt['pass'], topic_sub
-  client = MQTTClient(client_id, mqtt_server, user=mqtt_user, password=mqtt_pass)
+def connect_and_subscribe():  
+  client = MQTTClient(client_id, mqtt['server'], user=mqtt['user'], password=mqtt['pass'])
   client.set_callback(sub_cb)
   client.connect()
   client.subscribe(b'led')
